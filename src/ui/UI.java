@@ -204,9 +204,12 @@ public class UI {
             System.out.println("Please enter the flight you wish to take");
             flight = listener.nextLine();
             // Print out list query of Flight
-
-
-
+        }
+        String date1 = askDate(listener);
+        System.out.println("Do you wish to add... ");
+        System.out.println("[1] Return flight.");
+        System.out.println("[2] A second leg to another city.");
+        System.out.println("[3] None.");
 
 
 
@@ -217,14 +220,14 @@ public class UI {
         int comp1;
         int comp2;
         // Compare year
-        if (Integer.parseInt(date1.substring(0,3)) <=
-                Integer.parseInt(date2.substring(0,3))) {
+        if (Integer.parseInt(date1.substring(0,4)) <=
+                Integer.parseInt(date2.substring(0,4))) {
             // Compare month
-            if(Integer.parseInt(date1.substring(5,6)) <=
-                    Integer.parseInt(date2.substring(5,6))){
+            if(Integer.parseInt(date1.substring(5,7)) <=
+                    Integer.parseInt(date2.substring(5,7))){
                 // Compare date
-                if(Integer.parseInt(date1.substring(8,9)) <=
-                        Integer.parseInt(date2.substring(8,9))) {
+                if(Integer.parseInt(date1.substring(8)) <=
+                        Integer.parseInt(date2.substring(8))) {
                     return true;
                 }
             }
@@ -251,13 +254,13 @@ public class UI {
         int tempNumber;
         // Test format of string is valid (YYYY-MM-DD)
         if (date1.charAt(4) == '-' && date1.charAt(7) == '-') {
-            temp = date1.substring(0,3);
+            temp = date1.substring(0,4);
             // Test each section of that date to make sure it's a valid number.
             try {
                 tempNumber = Integer.parseInt(temp);
-                temp = date1.substring(5,6);
+                temp = date1.substring(5,7);
                 tempNumber = Integer.parseInt(temp);
-                temp = date1.substring(8,9);
+                temp = date1.substring(8);
                 tempNumber = Integer.parseInt(temp);
                 // If any number is valid, exception should be thrown by this point.
                 return true;
@@ -268,4 +271,11 @@ public class UI {
         }
         return false;
     }
+
+    static int methodSelector(Scanner listener) {
+        String methodSelection = listener.nextLine().toLowerCase();
+        if (methodSelection.length() == 1 ) {
+            methodSelection = methodSelection.substring(0,1);
+
+
 }
