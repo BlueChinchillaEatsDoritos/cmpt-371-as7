@@ -12,6 +12,7 @@ public class UI {
 
         String methodSelection = new String();
         char methodSelected = ' ';
+        int confirmation;
         Scanner keyboardListener = new Scanner(System.in);
 
         System.out.println("Airline Database");
@@ -36,16 +37,13 @@ public class UI {
                 } else if (methodSelected == '4') {
                     while (true) {
                         System.out.print("Are you sure you want to exit? [Y/N]  ");
-                        methodSelection = keyboardListener.nextLine().toLowerCase();
-                        if (methodSelection.length() == 1) {
-                            methodSelected = methodSelection.charAt(0);
-                            if (methodSelected == 'y') {
-                                System.exit(0);
-                            }
-                            if (methodSelected == 'n') {
-                                System.out.println();
-                                break;
-                            }
+                        confirmation = ynHandler(keyboardListener);
+                        if (confirmation == 1) {
+                            System.exit(0);
+                        }
+                        if (confirmation == 0) {
+                            System.out.println();
+                            break;
                         }
                     }
                 }
@@ -56,9 +54,24 @@ public class UI {
         }
     }
 
+    static int ynHandler(Scanner listener) {
+        char confirmation;
+        String keyboardInput = listener.nextLine().toLowerCase();
+        if (!keyboardInput.isEmpty()) {
+            confirmation = keyboardInput.charAt(0);
+            if (confirmation == 'y') {
+                return 1;
+            }
+            else if(confirmation == 'n') {
+                return 0;
+            }
+        }
+        return -1;
+    }
+
     static void addProfile(Scanner listener) {
         String keyboardInput = " ";
-        char confirmation = ' ';
+        int confirmation;
 
         Boolean enterDetails = true;
         Boolean confirmed = false;
@@ -82,11 +95,8 @@ public class UI {
             lastName = listener.nextLine();
             while (!confirmed) {
                 System.out.println("Confirm new passenger is " + firstName + " " + lastName + "? [Y/N}");
-                keyboardInput = listener.nextLine().toLowerCase();
-                if (!keyboardInput.isEmpty()) {
-                    confirmation = keyboardInput.charAt(0);
-                }
-                if (confirmation == 'y') {
+                confirmation = ynHandler(listener);
+                if (confirmation == 1) {
                     sqlCommand = sqlCommand + "(" + passengerID +", ' + firstName" + "', '" + lastName + "', 0);";
                     System.out.println("SQL Command: \n" + sqlCommand + "\n" );
 
@@ -94,7 +104,7 @@ public class UI {
                             + passengerID + "\neturning to menu...\n\n");
                     return;
                 }
-                if (confirmation == 'n') {
+                if (confirmation == 0) {
                     System.out.println();
                     break;
                 }
@@ -182,5 +192,80 @@ public class UI {
                     se.getSQLState()+"\nMessage:\n"+se.getMessage()+"\n");
             return;
         }
+    }
+
+    static void addBooking(Scanner listener) {
+        String date;
+        String flight;
+        System.out.println("Add Booking:");
+
+        Boolean finishedBooking = false;
+        while(!finishedBooking) {
+            System.out.println("Please enter the flight you wish to take");
+            flight = listener.nextLine();
+            // Print out list query of Flight
+
+
+
+
+
+
+        }
+    }
+
+    static Boolean dateComparer(String date1, String date2) {
+        int comp1;
+        int comp2;
+        // Compare year
+        if (Integer.parseInt(date1.substring(0,3)) <=
+                Integer.parseInt(date2.substring(0,3))) {
+            // Compare month
+            if(Integer.parseInt(date1.substring(5,6)) <=
+                    Integer.parseInt(date2.substring(5,6))){
+                // Compare date
+                if(Integer.parseInt(date1.substring(8,9)) <=
+                        Integer.parseInt(date2.substring(8,9))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static String askDate(Scanner listener) {
+        String date;
+        Boolean validDate = false;
+        while (!validDate) {
+            System.out.println("Please enter the date you wish to depart. Date should be in (YYYY-MM-DD).");
+            date = listener.nextLine();
+            if (dateChecker(date)) {
+                return date;
+            }
+        }
+        // Placeholder. Should never reach this point.
+        return null;
+    }
+
+    static Boolean dateChecker(String date1) {
+        String temp;
+        int tempNumber;
+        // Test format of string is valid (YYYY-MM-DD)
+        if (date1.charAt(4) == '-' && date1.charAt(7) == '-') {
+            temp = date1.substring(0,3);
+            // Test each section of that date to make sure it's a valid number.
+            try {
+                tempNumber = Integer.parseInt(temp);
+                temp = date1.substring(5,6);
+                tempNumber = Integer.parseInt(temp);
+                temp = date1.substring(8,9);
+                tempNumber = Integer.parseInt(temp);
+                // If any number is valid, exception should be thrown by this point.
+                return true;
+            }
+            catch(NumberFormatException e){
+                return false;
+            }
+        }
+        return false;
     }
 }
