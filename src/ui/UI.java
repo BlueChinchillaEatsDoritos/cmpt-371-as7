@@ -10,8 +10,8 @@ public class UI {
     public static void main(String[] args) {
         Boolean continueProgram = true;
 
-        String methodSelection = new String();
-        char methodSelected = ' ';
+        String methodSelection;
+        int methodSelected;
         int confirmation;
         Scanner keyboardListener = new Scanner(System.in);
 
@@ -24,31 +24,27 @@ public class UI {
             System.out.println("[3] Create a passenger booking");
             System.out.println("[4] Exit.\n");
 
-            methodSelection = keyboardListener.nextLine().toLowerCase();
-            if (methodSelection.length() == 1 ) {
-                methodSelected = methodSelection.charAt(0);
+            methodSelected = methodSelector(keyboardListener);
 
-                if (methodSelected == '1') {
-                    addProfile(keyboardListener);
-                } else if (methodSelected == '2') {
-                    System.exit(0);
-                } else if (methodSelected == '3') {
-                    System.exit(0);
-                } else if (methodSelected == '4') {
-                    while (true) {
-                        System.out.print("Are you sure you want to exit? [Y/N]  ");
-                        confirmation = ynHandler(keyboardListener);
-                        if (confirmation == 1) {
-                            System.exit(0);
-                        }
-                        if (confirmation == 0) {
-                            System.out.println();
-                            break;
-                        }
+            if (methodSelected == 1) {
+                addProfile(keyboardListener);
+            } else if (methodSelected == 2) {
+                System.exit(0);
+            } else if (methodSelected == 3) {
+                addBooking(keyboardListener);
+            } else if (methodSelected == 4) {
+                while (true) {
+                    System.out.print("Are you sure you want to exit? [Y/N]  ");
+                    confirmation = ynHandler(keyboardListener);
+                    if (confirmation == 1) {
+                        System.exit(0);
+                    }
+                    if (confirmation == 0) {
+                        System.out.println();
+                        break;
                     }
                 }
-            }
-            else{
+            } else {
                 System.out.println(("Oops! Command not recognized!\n"));
             }
         }
@@ -98,10 +94,10 @@ public class UI {
                 confirmation = ynHandler(listener);
                 if (confirmation == 1) {
                     sqlCommand = sqlCommand + "(" + passengerID +", ' + firstName" + "', '" + lastName + "', 0);";
-                    System.out.println("SQL Command: \n" + sqlCommand + "\n" );
+                    System.out.println("\nSQL Command: \n" + sqlCommand + "\n" );
 
                     System.out.println("Passenger " + firstName + " " + lastName + " created.\nPassenger ID is "
-                            + passengerID + "\neturning to menu...\n\n");
+                            + passengerID + "\nreturning to menu...\n\n");
                     return;
                 }
                 if (confirmation == 0) {
@@ -188,33 +184,76 @@ public class UI {
             return;
         }catch (SQLException se)
         {
-            System.out.println("\nSQL Exception occured, the state : "+
+            System.out.println("\nSQL Exception occurred, the state : "+
                     se.getSQLState()+"\nMessage:\n"+se.getMessage()+"\n");
             return;
         }
     }
 
     static void addBooking(Scanner listener) {
-        String date;
-        String flight;
+        String date = "Error";
+        String flight = "Error";
         System.out.println("Add Booking:");
 
-        Boolean finishedBooking = false;
-        while(!finishedBooking) {
-            System.out.println("Please enter the flight you wish to take");
-            flight = listener.nextLine();
-            // Print out list query of Flight
+        Boolean firstFlightComplete = false;
+        Boolean confirmation = false;
+
+        while(!firstFlightComplete) {
+            Boolean finishedBooking = false;
+            while (!finishedBooking) {
+                System.out.println("Please enter the flight you wish to take");
+                flight = listener.nextLine();
+                // Print out list query of Flight
+                break;
+            }
+
+            Boolean validDate = false;
+            while (!validDate) {
+                date = askDate(listener);
+                if (dateChecker(date)) {
+                    break;
+                }
+            }
+
+            System.out.println("Flight Details:\nFlight Code: " + flight
+                    + "\nDepart Date: " + date);
+
+            int yn;
+            while(!confirmation) {
+                System.out.println("\nIs this correct? [Y/N]");
+                yn = ynHandler(listener);
+                if (yn == 1) {
+                    firstFlightComplete = true;
+                    break;
+                }
+                if (yn == 0) {
+                    break;
+                }
+            }
         }
-        String date1 = askDate(listener);
-        System.out.println("Do you wish to add... ");
-        System.out.println("[1] Return flight.");
-        System.out.println("[2] A second leg to another city.");
-        System.out.println("[3] None.");
 
+        Boolean decideRT = false;
+        int RTselection;
 
+        while(!decideRT) {
+            System.out.println("Do you wish to add... ");
+            System.out.println("[1] Return flight.");
+            System.out.println("[2] A second leg to another city.");
+            System.out.println("[3] None.");
+            RTselection = methodSelector(listener);
 
+            if(RTselection == 1){
+                // Return flight
+            }
+            else if(RTselection == 2) {
+                // Second leg handle
+            }
+            else if(RTselection == 3) {
+                break;
+            }
         }
     }
+
 
     static Boolean dateComparer(String date1, String date2) {
         int comp1;
@@ -274,8 +313,10 @@ public class UI {
 
     static int methodSelector(Scanner listener) {
         String methodSelection = listener.nextLine().toLowerCase();
-        if (methodSelection.length() == 1 ) {
-            methodSelection = methodSelection.substring(0,1);
-
-
+        if (methodSelection.length() == 1) {
+            methodSelection = methodSelection.substring(0, 1);
+            return Integer.parseInt(methodSelection);
+        }
+        return -1;
+    }
 }
