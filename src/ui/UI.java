@@ -127,7 +127,7 @@ public class UI {
 
         try
         {
-            con = DriverManager.getConnection(connectionUrl,"","");
+            con = DriverManager.getConnection(connectionUrl,"gerland","Njf6m437P66FG62F");
         }catch (SQLException se)
         {
             System.out.println("\nNo proper DSN; exit now.\n");
